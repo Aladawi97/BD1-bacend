@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Special Offers Management</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .preview-image {
+            max-width: 200px;
+            max-height: 200px;
+            object-fit: contain;
+            margin-top: 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .form-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .discount-badge {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background-color: #dc3545;
+            color: white;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            box-shadow: 0 2px 4px rgba(220,53,69,0.3);
+            border: 2px solid white;
+        }
+        .preview-container {
+            position: relative;
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .table-container {
+            margin-top: 3rem;
+            padding: 1.5rem;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .offers-table img {
+            width: 60px;
+            height: 60px;
+            object-fit: contain;
+            border-radius: 8px;
+            background: #f8f9fa;
+            padding: 4px;
+        }
+        .table > :not(caption) > * > * {
+            padding: 1rem;
+        }
+        .btn-icon {
+            width: 32px;
+            height: 32px;
+            padding: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            margin: 0 4px;
+        }
+        .form-label {
+            font-weight: 500;
+            color: #495057;
+        }
+        .form-control, .form-select {
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+            padding: 0.75rem;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: #80bdff;
+            box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+        }
+        .section-title {
+            color: #212529;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #e9ecef;
+        }
+        .table thead th {
+            background-color: #f8f9fa;
+            border-bottom: 2px solid #dee2e6;
+            color: #495057;
+            font-weight: 600;
+        }
+        .price-column {
+            font-weight: 600;
+            color: #198754;
+        }
+        .discount-column {
+            font-weight: 600;
+            color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+    <div class="container form-container">
+        <h2 class="section-title">Special Offers Management</h2>
+        
+        <form id="offerForm" class="needs-validation" novalidate>
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <label for="productSelect" class="form-label">Select Product</label>
+                    <select class="form-select" id="productSelect" required>
+                        <option value="">Choose a product...</option>
+                    </select>
+                    <div class="invalid-feedback">
+                        Please select a product.
+                    </div>
+                    <div class="preview-container" id="imagePreviewContainer" style="display: none;">
+                        <div class="discount-badge">
+                            <span id="discountBadge">-0%</span>
+                        </div>
+                        <img id="imagePreview" class="preview-image" src="" alt="Preview">
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <label for="offerName" class="form-label">Offer Name</label>
+                    <input type="text" class="form-control" id="offerName" required>
+                    <div class="invalid-feedback">
+                        Please provide an offer name.
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <label for="description" class="form-label">Description</label>
+                <textarea class="form-control" id="description" rows="3" required></textarea>
+                <div class="invalid-feedback">
+                    Please provide a description.
+                </div>
+            </div>
+
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    <label for="originalPrice" class="form-label">Original Price</label>
+                    <div class="input-group">
+                        <span class="input-group-text">$</span>
+                        <input type="number" class="form-control" id="originalPrice" step="0.01" required>
+                        <div class="invalid-feedback">
+                            Please provide the original price.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <label for="discountPercentage" class="form-label">Discount Percentage</label>
+                    <div class="input-group">
+                        <input type="number" class="form-control" id="discountPercentage" min="0" max="99" required
+                               oninput="this.value = this.value > 99 ? 99 : Math.floor(Number(this.value))">
+                        <span class="input-group-text">%</span>
+                        <div class="invalid-feedback">
+                            Please enter a valid discount (0-99).
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <label for="finalPrice" class="form-label">Final Price</label>
+                    <div class="input-group">
+                        <span class="input-group-text">$</span>
+                        <input type="number" class="form-control" id="finalPrice" readonly>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <label for="stock" class="form-label">Available Stock</label>
+                    <input type="number" class="form-control" id="stock" min="0" required>
+                    <div class="invalid-feedback">
+                        Please provide the stock amount.
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <label for="timeLeft" class="form-label">Offer Duration (days)</label>
+                    <input type="number" class="form-control" id="timeLeft" min="1" required>
+                    <div class="invalid-feedback">
+                        Please provide the offer duration.
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                <button type="button" class="btn btn-outline-secondary me-2" onclick="window.location.href='/'">
+                    <i class="bi bi-x-lg me-1"></i> Cancel
+                </button>
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-plus-lg me-1"></i> Add Offer
+                </button>
+            </div>
+        </form>
+
+        <div class="table-container">
+            <h3 class="section-title">Current Offers</h3>
+            <div class="table-responsive offers-table">
+                <table class="table table-hover align-middle">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Offer Name</th>
+                            <th>Original Price</th>
+                            <th>Discount</th>
+                            <th>Final Price</th>
+                            <th>Stock</th>
+                            <th>Time Left</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="offersTableBody">
+                        <!-- Will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let productsData = [];
+        let currentOffers = [];
+
+        // Fetch and display offers
+        async function fetchAndDisplayOffers() {
+            try {
+                const response = await fetch('/api/offers');
+                const offers = await response.json();
+                currentOffers = offers;
+                displayOffers(offers);
+            } catch (error) {
+                console.error('Error fetching offers:', error);
+            }
+        }
+
+        // Display offers in table
+        function displayOffers(offers) {
+            const tbody = document.getElementById('offersTableBody');
+            tbody.innerHTML = '';
+
+            offers.forEach(offer => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>
+                        <img src="${offer.image_url}" alt="${offer.name}">
+                    </td>
+                    <td>${offer.name}</td>
+                    <td class="price-column">$${offer.original_price}</td>
+                    <td class="discount-column">${parseInt(offer.discount_percentage)}%</td>
+                    <td class="price-column">$${offer.discounted_price}</td>
+                    <td>${offer.stock}</td>
+                    <td>${offer.time_left}</td>
+                    <td>
+                        <button class="btn btn-primary btn-icon" onclick="editOffer(${offer.id})" title="Edit">
+                            <i class="bi bi-pencil"></i>
+                        </button>
+                        <button class="btn btn-danger btn-icon" onclick="deleteOffer(${offer.id})" title="Delete">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Edit offer
+        async function editOffer(offerId) {
+            const offer = currentOffers.find(o => o.id === offerId);
+            if (!offer) return;
+
+            document.getElementById('productSelect').value = offer.product_id;
+            document.getElementById('offerName').value = offer.name;
+            document.getElementById('description').value = offer.description;
+            document.getElementById('originalPrice').value = offer.original_price;
+            document.getElementById('discountPercentage').value = parseInt(offer.discount_percentage);
+            document.getElementById('stock').value = offer.stock;
+            document.getElementById('timeLeft').value = offer.time_left.split(' ')[0];
+            
+            const previewContainer = document.getElementById('imagePreviewContainer');
+            const preview = document.getElementById('imagePreview');
+            preview.src = offer.image_url;
+            previewContainer.style.display = 'inline-block';
+            
+            calculateFinalPrice();
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            const submitButton = document.querySelector('button[type="submit"]');
+            submitButton.innerHTML = '<i class="bi bi-check-lg me-1"></i> Update Offer';
+            submitButton.dataset.offerId = offerId;
+        }
+
+        // Delete offer
+        async function deleteOffer(offerId) {
+            if (!confirm('Are you sure you want to delete this offer?')) return;
+
+            try {
+                const response = await fetch(`/api/offers/${offerId}`, {
+                    method: 'DELETE'
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to delete offer');
+                }
+
+                await fetchAndDisplayOffers();
+                alert('Offer deleted successfully');
+            } catch (error) {
+                console.error('Error deleting offer:', error);
+                alert('Error deleting offer');
+            }
+        }
+
+        // Fetch products for select dropdown
+        fetch('/api/products')
+            .then(response => response.json())
+            .then(products => {
+                productsData = products;
+                const select = document.getElementById('productSelect');
+                products.forEach(product => {
+                    const option = document.createElement('option');
+                    option.value = product.id;
+                    option.textContent = product.name;
+                    select.appendChild(option);
+                });
+            })
+            .catch(error => console.error('Error fetching products:', error));
+
+        // Update product image when selected
+        document.getElementById('productSelect').addEventListener('change', function(e) {
+            const selectedProduct = productsData.find(p => p.id === parseInt(e.target.value));
+            const previewContainer = document.getElementById('imagePreviewContainer');
+            const preview = document.getElementById('imagePreview');
+            
+            if (selectedProduct && selectedProduct.image_url) {
+                preview.src = selectedProduct.image_url;
+                previewContainer.style.display = 'inline-block';
+                
+                document.getElementById('originalPrice').value = selectedProduct.price;
+                calculateFinalPrice();
+
+                document.getElementById('stock').value = selectedProduct.stock;
+
+                const offerNameInput = document.getElementById('offerName');
+                if (!offerNameInput.value) {
+                    offerNameInput.value = `Special Offer - ${selectedProduct.name}`;
+                }
+            } else {
+                previewContainer.style.display = 'none';
+            }
+        });
+
+        // Calculate final price
+        document.getElementById('originalPrice').addEventListener('input', calculateFinalPrice);
+        document.getElementById('discountPercentage').addEventListener('input', calculateFinalPrice);
+
+        function calculateFinalPrice() {
+            const originalPrice = parseFloat(document.getElementById('originalPrice').value) || 0;
+            const discount = parseFloat(document.getElementById('discountPercentage').value) || 0;
+            const finalPrice = originalPrice * (1 - discount / 100);
+            
+            document.getElementById('finalPrice').value = finalPrice.toFixed(2);
+            document.getElementById('discountBadge').textContent = `-${parseInt(discount)}%`;
+        }
+
+        // Form submission
+        const form = document.getElementById('offerForm');
+        form.addEventListener('submit', async function(event) {
+            event.preventDefault();
+            
+            if (!form.checkValidity()) {
+                event.stopPropagation();
+                form.classList.add('was-validated');
+                return;
+            }
+
+            const discountPercentage = parseInt(document.getElementById('discountPercentage').value);
+            if (discountPercentage > 99) {
+                alert('Discount percentage cannot exceed 99%');
+                return;
+            }
+
+            const selectedProduct = productsData.find(p => p.id === parseInt(document.getElementById('productSelect').value));
+            const submitButton = document.querySelector('button[type="submit"]');
+            const offerId = submitButton.dataset.offerId;
+            
+            const formData = {
+                product_id: parseInt(document.getElementById('productSelect').value),
+                name: document.getElementById('offerName').value,
+                description: document.getElementById('description').value,
+                originalPrice: parseFloat(document.getElementById('originalPrice').value),
+                discountPercentage: parseInt(document.getElementById('discountPercentage').value),
+                discountedPrice: parseFloat(document.getElementById('finalPrice').value),
+                stock: parseInt(document.getElementById('stock').value),
+                timeLeft: `${document.getElementById('timeLeft').value} days`,
+                image_url: selectedProduct.image_url
+            };
+
+            try {
+                const url = offerId ? `/api/offers/${offerId}` : '/api/offers';
+                const method = offerId ? 'PUT' : 'POST';
+
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Failed to save offer');
+                }
+
+                form.reset();
+                document.getElementById('imagePreviewContainer').style.display = 'none';
+                submitButton.innerHTML = '<i class="bi bi-plus-lg me-1"></i> Add Offer';
+                delete submitButton.dataset.offerId;
+
+                await fetchAndDisplayOffers();
+
+                alert(offerId ? 'Offer updated successfully!' : 'Offer added successfully!');
+            } catch (error) {
+                console.error('Error:', error);
+                alert(`Error: ${error.message}`);
+            }
+        });
+
+        // Load existing offers when page loads
+        fetchAndDisplayOffers();
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html> 
