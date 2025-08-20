@@ -7,11 +7,10 @@ const app = express();
 
 // CORS configuration
 app.use(cors({
-  origin: ['http://localhost:3000', 'http://localhost:5000'],
+  origin: ['http://localhost:3000', 'http://localhost:5000', 'https://bd-1-omega.vercel.app'],  // إضافة رابط الـ front-end من Vercel
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type']
 }));
-
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
