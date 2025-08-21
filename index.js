@@ -1,4 +1,3 @@
-
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
@@ -9,7 +8,7 @@ const app = express();
 
 // CORS configuration
 app.use(cors({
-  origin: ['*'],  
+  origin: ['*'],  // السماح لجميع المواقع بالوصول
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type']
 }));
